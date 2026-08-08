@@ -1,4 +1,5 @@
-const express = require("express");
+import express from "express";
+
 const app = express();
 
 app.use(express.json());
@@ -12,6 +13,8 @@ app.post("/chat", (req, res) => {
   res.json({ reply: "Tu bola: " + message });
 });
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
   console.log("Server chal gaya 🚀");
 });
