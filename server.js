@@ -5,18 +5,18 @@ const app = express();
 
 app.use(express.json());
 
-// Test route
+// ✅ Test route (ye rehne de)
 app.get("/", (req, res) => {
   res.send("Backend chal raha hai ✅");
 });
 
-// Chat route (Gemini AI)
+// ✅ SIRF YE CHANGE KARNA HAI
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
   try {
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         contents: [
           {
@@ -26,13 +26,15 @@ app.post("/chat", async (req, res) => {
       }
     );
 
-    const reply =
-      response.data.candidates[0].content.parts[0].text;
+    console.log("FULL RESPONSE:", response.data);
 
-    res.json({ reply: "GEMINI WORKING ✅ " + reply });
+    const reply =
+      response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    res.json({ reply: reply || "No response from AI 😢" });
 
   } catch (err) {
-    console.log("ERROR:", err.message);
+    console.log("ERROR:", err.response?.data || err.message);
     res.json({ reply: "Error aaya 😢" });
   }
 });
