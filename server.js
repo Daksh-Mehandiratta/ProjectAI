@@ -15,6 +15,8 @@ app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
   try {
+    console.log("API KEY:", process.env.GEMINI_API_KEY);
+
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
@@ -26,7 +28,7 @@ app.post("/chat", async (req, res) => {
       }
     );
 
-    console.log("FULL RESPONSE:", response.data);
+    console.log("FULL RESPONSE:", JSON.stringify(response.data, null, 2));
 
     const reply =
       response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -34,7 +36,7 @@ app.post("/chat", async (req, res) => {
     res.json({ reply: reply || "No response from AI 😢" });
 
   } catch (err) {
-    console.log("ERROR:", err.response?.data || err.message);
+    console.log("ERROR FULL:", err.response?.data || err.message);
     res.json({ reply: "Error aaya 😢" });
   }
 });
