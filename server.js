@@ -1,20 +1,22 @@
-import express from "express";
+import axios from "axios";
 
-const app = express();
-
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Backend chal raha hai ✅");
-});
-
-app.post("/chat", (req, res) => {
+app.post("/chat", async (req, res) => {
   const { message } = req.body;
-  res.json({ reply: "Tu bola: " + message });
-});
 
-const PORT = process.env.PORT || 3000;
+  try {
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [{ parts: [{ text: message }] }],
+      }
+    );
 
-app.listen(PORT, () => {
-  console.log("Server chal gaya 🚀");
+    const reply =
+      response.data.candidates[0].content.parts[0].text;
+
+    res.json({ reply });
+  } catch (err) {
+    console.log(err.message);
+    res.json({ reply: "Error aaya 😢" });
+  }
 });
